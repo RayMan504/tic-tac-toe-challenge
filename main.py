@@ -61,7 +61,15 @@ class TicTacToe:
             if self.conditionValidator(column):
                 self.hasPlayerWon = True
 
-
+    # iterate diagonally
+    def checkDiagonal(self):
+        # we know that in tic tac toe only two possible win conditions for diagonals
+        diagonalOne = [self.board[0][0], self.board[1][1], self.board[2][2]]
+        diagonalTwo = [self.board[0][2], self.board[1][1], self.board[2][0]]
+        # validate
+        if self.conditionValidator(diagonalOne) or self.conditionValidator(diagonalTwo):
+            self.hasPlayerWon = 
+            
     # end the game 
     def endGame(self):
         print(f"{self.piece} wins!")
