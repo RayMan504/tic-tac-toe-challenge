@@ -1,20 +1,20 @@
 class TicTacToe:
     #start game on init
     def __init__(self):
-        # prompt player names and assign X and O
-        piece = input("Player 1 is X or O? ")
-        self.piece = piece
+        self.piece = "X"
         # Generate three by three grid
         self.board = [["", "", ""], ["", "", ""], ["", "", ""]]
-        self.startTurn(self.piece)
+        self.hasPlayerWon = False
 
-    def startTurn(self, player):
-        #prompt player to make move
-        row = input("Choose Row Number: 1-3 ")
-        column = input("Choose Column Number: 1-3 ")
+        self.startTurn()
+
+    def startTurn(self):
+        # prompt player to make move
+        row = input(f"Player {self.piece} Choose Row Number: 1-3 ")
+        column = input(f"Player {self.piece} Choose Column Number: 1-3 ")
         #all method to place X or O on board
-        self.makeMove(int(row) - 1, int(column) -1, player)
-    # TODO: User can place X and 0 on grid
+        self.makeMove(int(row) - 1, int(column) -1, self.piece)
+    # User can place X and 0 on grid
     def makeMove(self, row, column, player):
         # Track user input when placed on grid
         # if space occupied
@@ -22,27 +22,49 @@ class TicTacToe:
             # display message
             print("Space occupied. Try again")
             # redo turn
-            self.startTurn(self.piece)
+            self.startTurn()
 
-        # after adding new space update piece
-        if player == "X":
-            self.board[row][column] = "X"
-            self.piece = "O"
-        else:
-            self.board[row][column] = "0"
-            self.piece = "X"
+        self.board[row][column] = player
         print(self.board)
-        self.startTurn(self.piece)
-    # TODO: Validate win conditions 
+        self.checkWinConditions()
+    # Validate win conditions
+    def conditionValidator(self, rowOrColumn):
+        # check if all values match set of Xs or Os
+        return all(space == self.piece for space in rowOrColumn)
+    def checkWinConditions(self):
         # validate three ways
+        self.checkHorizontal()
+        self.checkVertical()
+        self.checkDiagonal()
+
+        # if a player has won
+        if self.hasPlayerWon:
+            # end the game
+            self.endGame()
+        else:
+            # toggle piece
+            self.piece = "O" if self.piece == "X" else "X"
+            self.startTurn()
+
+    def checkHorizontal(self):
         # iterate horizontally
-            # verify win condition
-        # iterate vertically
-            # verify win condition 
-        # iterate diagonally
-            # verify win condition
-        # if condition met
-            # end the game   
-    # TODO: end the game  
+        for row in self.board:
+            # verify win condition: do all values in row match
+            if self.conditionValidator(row) == True:
+                self.hasPlayerWon = True
+
+    def checkVertical(self):
+        # iterate vertically: loop numbers 0 - 3
+        for i in range(3):
+            # find a way to only grab same index in each row
+            column = [row[i] for row in self.board]
+            if self.conditionValidator(column):
+                self.hasPlayerWon = True
+
+
+    # end the game 
+    def endGame(self):
+        print(f"{self.piece} wins!")
+        return
 
 newGame = TicTacToe()
