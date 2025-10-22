@@ -12,25 +12,37 @@ class TicTacToe:
         # prompt player to make move
         row = input(f"Player {self.piece} Choose Row Number: 1-3 ")
         column = input(f"Player {self.piece} Choose Column Number: 1-3 ")
+        
+        # figure out how to negate non numbers
+        if(row.isdigit() == False or column.isdigit() == False):
+            print("Input must be a number!")
+            self.startTurn()
         #all method to place X or O on board
         self.makeMove(int(row) - 1, int(column) -1, self.piece)
+
     # User can place X and 0 on grid
     def makeMove(self, row, column, player):
+        # handle out of range coordinates
+        if(row < 0 or row > 2 or column > 2 or column < 0):
+            print("Out of board range! Try again.")
+            self.startTurn()
         # Track user input when placed on grid
         # if space occupied
         if self.board[row][column] != "":
             # display message
-            print("Space occupied. Try again")
+            print("Space occupied! Try again.")
             # redo turn
             self.startTurn()
 
         self.board[row][column] = player
         print(self.board)
         self.checkWinConditions()
+
     # Validate win conditions
     def conditionValidator(self, rowOrColumn):
         # check if all values match set of Xs or Os
         return all(space == self.piece for space in rowOrColumn)
+    
     def checkWinConditions(self):
         # validate three ways
         self.checkHorizontal()
