@@ -6,8 +6,14 @@ class TicTacToe:
         self.board = [["", "", ""], ["", "", ""], ["", "", ""]]
         self.hasPlayerWon = False
 
-        print(self.board)
+        print(self.drawBoard())
         self.startTurn()
+
+    # draw board to render to user
+    def drawBoard(self): 
+        # 3x3 grid
+        for i in range(3):
+            print(f"| {self.board[i][0]} | {self.board[i][1]} | {self.board[i][2]} |")
 
     def startTurn(self):
         # prompt player to make move
@@ -36,7 +42,7 @@ class TicTacToe:
             self.startTurn()
 
         self.board[row][column] = player
-        print(self.board)
+        print(self.drawBoard())
         self.checkWinConditions()
 
     # Validate win conditions
@@ -96,7 +102,7 @@ class TicTacToe:
     
     # end the game 
     def endGame(self):
-        print(f"{self.piece} wins!") if self.hasPlayerWon else print(f"Match Draw!")
+        print(f"Player {self.piece} wins!") if self.hasPlayerWon else print(f"Match Draw!")
         return
 
 TicTacToe()
