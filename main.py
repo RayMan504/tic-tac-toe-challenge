@@ -6,6 +6,7 @@ class TicTacToe:
         self.board = [["", "", ""], ["", "", ""], ["", "", ""]]
         self.hasPlayerWon = False
 
+        print(self.board)
         self.startTurn()
 
     def startTurn(self):
@@ -53,6 +54,11 @@ class TicTacToe:
         if self.hasPlayerWon:
             # end the game
             self.endGame()
+
+
+        # check for draw
+        elif self.hasPlayerWon == False and self.checkIfEntireBoardPopulated() == True:
+            self.endGame()
         else:
             # toggle piece
             self.piece = "O" if self.piece == "X" else "X"
@@ -81,9 +87,16 @@ class TicTacToe:
         # validate
         if self.conditionValidator(diagonalOne) or self.conditionValidator(diagonalTwo):
             self.hasPlayerWon = True
+
+    def checkIfEntireBoardPopulated(self):
+        # verify if all pieces places on board (try to flatten?)
+        # flatten
+        flattenedBoard = [space for row in self.board for space in row]
+        return all(space != "" for space in flattenedBoard)
+    
     # end the game 
     def endGame(self):
-        print(f"{self.piece} wins!")
+        print(f"{self.piece} wins!") if self.hasPlayerWon else print(f"Match Draw!")
         return
 
-newGame = TicTacToe()
+TicTacToe()
