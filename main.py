@@ -1,3 +1,6 @@
+import random
+
+
 class TicTacToe:
     #start game on init
     def __init__(self):
@@ -10,22 +13,75 @@ class TicTacToe:
         self.startTurn()
 
     # draw board to render to user
-    def drawBoard(self): 
-        # 3x3 grid
-        for i in range(3):
-            print(f"| {self.board[i][0]} | {self.board[i][1]} | {self.board[i][2]} |")
+    def drawBoard(self):
+        rendered_rows = []
+        for row in self.board:
+            rendered_rows.append("| " + " | ".join(cell if cell else " " for cell in row) + " |")
+        return "\n".join(rendered_rows)
 
     def startTurn(self):
-        # prompt player to make move
-        row = input(f"Player {self.piece} Choose Row Number: 1-3 ")
-        column = input(f"Player {self.piece} Choose Column Number: 1-3 ")
-        
-        # figure out how to negate non numbers
-        if(row.isdigit() == False or column.isdigit() == False):
-            print("Input must be a number!")
-            self.startTurn()
-        #all method to place X or O on board
-        self.makeMove(int(row) - 1, int(column) -1, self.piece)
+        if self.piece == "X":
+            # prompt player to make move
+            row = input(f"Player {self.piece} Choose Row Number: 1-3 ")
+            column = input(f"Player {self.piece} Choose Column Number: 1-3 ")
+
+            # figure out how to negate non numbers
+            if(row.isdigit() == False or column.isdigit() == False):
+                print("Input must be a number!")
+                self.startTurn()
+                return
+            #all method to place X or O on board
+            self.makeMove(int(row) - 1, int(column) -1, self.piece)
+            return
+
+        self.computerMove()
+
+    def getAvailableMoves(self):
+        return [(row, column) for row in range(3) for column in range(3) if self.board[row][column] == ""]
+
+    def getWinningMove(self, player):
+        for row, column in self.getAvailableMoves():
+            self.board[row][column] = player
+            if self.checkForWinner(player):
+                self.board[row][column] = ""
+                return row, column
+            self.board[row][column] = ""
+        return None
+
+    def checkForWinner(self, player):
+        previousPiece = self.piece
+        self.piece = player
+        self.checkHorizontal()
+        self.checkVertical()
+        self.checkDiagonal()
+        hasWinner = self.hasPlayerWon
+        self.hasPlayerWon = False
+        self.piece = previousPiece
+        return hasWinner
+
+    def computerMove(self):
+        availableMoves = self.getAvailableMoves()
+
+        if not availableMoves:
+            return
+
+        # 1. Take an immediate win if available.
+        winningMove = self.getWinningMove(self.piece)
+        if winningMove is not None:
+            row, column = winningMove
+        else:
+            # 2. Block the player's immediate win.
+            opponent = "X" if self.piece == "O" else "O"
+            blockMove = self.getWinningMove(opponent)
+            if blockMove is not None:
+                row, column = blockMove
+            else:
+                # 3. Prefer the center, then corners, then remaining open spaces.
+                preferredMoves = [(1, 1), (0, 0), (0, 2), (2, 0), (2, 2), (0, 1), (1, 0), (1, 2), (2, 1)]
+                row, column = next(((r, c) for r, c in preferredMoves if (r, c) in availableMoves), random.choice(availableMoves))
+
+        print(f"Computer plays {self.piece} at row {row + 1}, column {column + 1}")
+        self.makeMove(row, column, self.piece)
 
     # User can place X and 0 on grid
     def makeMove(self, row, column, player):
@@ -33,6 +89,7 @@ class TicTacToe:
         if(row < 0 or row > 2 or column > 2 or column < 0):
             print("Out of board range! Try again.")
             self.startTurn()
+            return
         # Track user input when placed on grid
         # if space occupied
         if self.board[row][column] != "":
@@ -40,6 +97,7 @@ class TicTacToe:
             print("Space occupied! Try again.")
             # redo turn
             self.startTurn()
+            return
 
         self.board[row][column] = player
         print(self.drawBoard())
@@ -105,4 +163,6 @@ class TicTacToe:
         print(f"Player {self.piece} wins!") if self.hasPlayerWon else print(f"Match Draw!")
         return
 
-TicTacToe()
+
+if __name__ == "__main__":
+    TicTacToe()
